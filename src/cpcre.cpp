@@ -1,6 +1,6 @@
 /*
 	Copyright (C) 2003-2005 Daniel Muller, dan at verliba dot cz
-	Copyright (C) 2006-2025 Verlihub Team, info at verlihub dot net
+	Copyright (C) 2006-2026 Verlihub Team, info at verlihub dot net
 
 	Verlihub is free software; You can redistribute it
 	and modify it under the terms of the GNU General
@@ -19,17 +19,21 @@
 */
 
 #include "cpcre.h"
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
+
 #include "stringutils.h"
 
 using namespace std;
+
 namespace nVerliHub {
 	namespace nUtils {
 
 cPCRE::cPCRE(int offsetResultSize):
 	mPattern(NULL),
+	mMatch(NULL),
 	mOffsetResults(NULL),
 	mOffsetResultSize(offsetResultSize)
 {
@@ -38,10 +42,14 @@ cPCRE::cPCRE(int offsetResultSize):
 
 cPCRE::~cPCRE()
 {
+	if (mMatch)
+		pcre2_match_data_free(mMatch);
+
 	if (mPattern)
-		pcre_free(mPattern);
+		pcre2_code_free(mPattern);
 
 	mPattern = NULL;
+	mMatch = NULL;
 
 	if (mOffsetResults)
 		delete [] mOffsetResults;
@@ -51,6 +59,7 @@ cPCRE::~cPCRE()
 
 cPCRE::cPCRE(const char *pattern, unsigned int options, int offsetResultSize):
 	mPattern(NULL),
+	mMatch(NULL),
 	mOffsetResults(NULL),
 	mOffsetResultSize(offsetResultSize)
 {
@@ -60,6 +69,7 @@ cPCRE::cPCRE(const char *pattern, unsigned int options, int offsetResultSize):
 
 cPCRE::cPCRE(const string &pattern, unsigned int options, int coord):
 	mPattern(NULL),
+	mMatch(NULL),
 	mOffsetResults(NULL),
 	mOffsetResultSize(coord)
 {
@@ -69,18 +79,22 @@ cPCRE::cPCRE(const string &pattern, unsigned int options, int coord):
 
 bool cPCRE::Compile(const char *pattern, unsigned int options)
 {
-	const char *errptr;
-	int erroffset;
-	mPattern = pcre_compile(pattern, options, &errptr, &erroffset, NULL);
+	int errornumber;
+	PCRE2_SIZE erroffset;
+	mPattern = pcre2_compile((PCRE2_SPTR)pattern, PCRE2_ZERO_TERMINATED, options, &errornumber, &erroffset, NULL);
 	return mPattern != NULL;
 }
 
 void cPCRE::Clear()
 {
+	if (mMatch)
+		pcre2_match_data_free(mMatch);
+
 	if (mPattern)
-		pcre_free(mPattern);
+		pcre2_code_free(mPattern);
 
 	mPattern = NULL;
+	mMatch = NULL;
 	mResult = 0;
 
 	if (!mOffsetResults)
@@ -89,7 +103,12 @@ void cPCRE::Clear()
 
 int cPCRE::Exec(const string &subject)
 {
-	mResult = pcre_exec(mPattern, NULL, subject.c_str(), subject.size(), 0, 0, mOffsetResults, mOffsetResultSize);
+	mMatch = pcre2_match_data_create_from_pattern(mPattern, NULL);
+	mResult = pcre2_match(mPattern, subject.c_str(), subject.size(), 0, 0, mMatch, NULL);
+
+	if (mResult > 0)
+		mOffsetResults = pcre2_get_ovector_pointer(mMatch);
+
 	return mResult;
 }
 
@@ -109,7 +128,7 @@ int cPCRE::Compare(int index, const string &text, const string &text2)
 
 int cPCRE::Compare(const string &name, const string &text, const string &text2)
 {
-	return Compare(this->GeStringNumber(name), text, text2.c_str());
+	return Compare(this->GetStringNumber(name), text, text2.c_str());
 }
 
 void cPCRE::Extract(int index, const string &src, string &dst)
@@ -138,9 +157,9 @@ void cPCRE::Replace(int index, string &subject, const string &replace)
 	subject.replace(start, mOffsetResults[(index << 1) + 1] - start, replace);
 }
 
-int cPCRE::GeStringNumber(const string &substring)
+int cPCRE::GetStringNumber(const string &substring)
 {
-	return pcre_get_stringnumber(this->mPattern, substring.c_str());
+	return pcre2_substring_number_from_name(this->mPattern, (PCRE2_SPTR)substring.c_str());
 }
 
 	}; // namespace nUtils
