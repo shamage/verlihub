@@ -50,10 +50,6 @@ cPCRE::~cPCRE()
 
 	mPattern = NULL;
 	mMatch = NULL;
-
-	if (mOffsetResults)
-		delete [] mOffsetResults;
-
 	mOffsetResults = NULL;
 }
 
@@ -96,15 +92,12 @@ void cPCRE::Clear()
 	mPattern = NULL;
 	mMatch = NULL;
 	mResult = 0;
-
-	if (!mOffsetResults)
-		mOffsetResults = new int[3 * mOffsetResultSize];
 }
 
 int cPCRE::Exec(const string &subject)
 {
 	mMatch = pcre2_match_data_create_from_pattern(mPattern, NULL);
-	mResult = pcre2_match(mPattern, subject.c_str(), subject.size(), 0, 0, mMatch, NULL);
+	mResult = pcre2_match(mPattern, (PCRE2_SPTR)subject.c_str(), subject.size(), 0, 0, mMatch, NULL);
 
 	if (mResult > 0)
 		mOffsetResults = pcre2_get_ovector_pointer(mMatch);
