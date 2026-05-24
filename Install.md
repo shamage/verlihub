@@ -11,7 +11,7 @@ Dependencies and installation
 	[ --- lib hdr ] LibICU		55.0
 	[ bin --- --- ] Make
 	[ --- lib hdr ] ZLib
-	[ --- lib hdr ] PCRE2
+	[ --- lib hdr ] PCRE
 	[ --- lib hdr ] GetText
 	[ --- lib hdr ] MaxMindDB
 	[ ??? ??? ??? ] LibIntl
@@ -26,7 +26,7 @@ Dependencies and installation
 
 * Install dependencies on Debian:
 
-sudo apt install libpcre2-dev libssl-dev mysql-server mysql-client libmysqlclient-dev libmaxminddb-dev libicu-dev gettext libasprintf-dev g++ make cmake
+sudo apt install libpcre3-dev libssl-dev mysql-server mysql-client libmysqlclient-dev libmaxminddb-dev libicu-dev gettext libasprintf-dev g++ make cmake
 
  * Optional dependencies
 
