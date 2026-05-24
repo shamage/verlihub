@@ -5,6 +5,7 @@
 * Added: Configuration tls_force_myip to force external TLS proxy
 * Added: Built-in TLS proxy regenerates certificates on expiration
 * Added: Lua 5.5 support
+* Added: PCRE2 support
 * Added: Consider users with hidden chat on welcome message
 * Updated: Translation files
 * Testing: Python plugin with version 3.x support
