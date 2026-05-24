@@ -77,7 +77,7 @@ bool cPCRE::Compile(const char *pattern, unsigned int options)
 {
 	int errornumber;
 	PCRE2_SIZE erroffset;
-	mPattern = pcre2_compile((PCRE2_SPTR)pattern, pattern.size(), options, &errornumber, &erroffset, NULL);
+	mPattern = pcre2_compile((PCRE2_SPTR)pattern, PCRE2_ZERO_TERMINATED, options, &errornumber, &erroffset, NULL);
 	return mPattern != NULL;
 }
 
