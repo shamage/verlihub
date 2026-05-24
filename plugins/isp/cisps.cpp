@@ -57,17 +57,17 @@ cISP::~cISP()
 
 void cISP::OnLoad()
 {
-	int pcre_options = PCRE2_EXTENDED;
+	int pcre_options = PCRE_EXTENDED;
 	mpNickRegex = new cPCRE();
 	mpConnRegex = new cPCRE();
 	if (mNickPattern.size())
 	{
-		if( !mPI->mCfg->case_sensitive_nick_pattern ) pcre_options |= PCRE2_CASELESS;
+		if( !mPI->mCfg->case_sensitive_nick_pattern ) pcre_options |= PCRE_CASELESS;
 		ReplaceVarInString(mNickPattern,"CC",mNickPattern,"(?P<CC>..)");
 		mOK = mpNickRegex->Compile(mNickPattern.c_str(),pcre_options);
 	} else mOK = true;
 	if (mOK && mConnPattern.size())
-		mOK = mpConnRegex->Compile(mConnPattern.c_str(),PCRE2_CASELESS);
+		mOK = mpConnRegex->Compile(mConnPattern.c_str(),PCRE_CASELESS);
 
 }
 
