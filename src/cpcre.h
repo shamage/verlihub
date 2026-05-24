@@ -129,7 +129,7 @@ namespace nVerliHub {
 				 * @param name Named substring.
 				 * @return The number of named substirng.
 				 */
-				int GetStringNumber(const string &substring);
+				int GeStringNumber(const string &substring);
 
 				bool PartFound(int index);
 
@@ -145,10 +145,7 @@ namespace nVerliHub {
 
 			private:
 				/// Compiled regular expression.
-				pcre2_code *mPattern;
-
-				// match data
-				pcre2_match_data *mMatch;
+				pcre *mPattern;
 
 				/// Number of captured substring of
 				/// last call of Exec().
@@ -156,7 +153,7 @@ namespace nVerliHub {
 				int mResult;
 
 				/// Pointer to an array of ints for result offsets.
-				PCRE2_SIZE *mOffsetResults;
+				int *mOffsetResults;
 
 				/// Number of elements in the array
 				int mOffsetResultSize;

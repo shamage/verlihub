@@ -1,6 +1,6 @@
 /*
 	Copyright (C) 2003-2005 Daniel Muller, dan at verliba dot cz
-	Copyright (C) 2006-2026 Verlihub Team, info at verlihub dot net
+	Copyright (C) 2006-2025 Verlihub Team, info at verlihub dot net
 
 	Verlihub is free software; You can redistribute it
 	and modify it under the terms of the GNU General
@@ -76,7 +76,7 @@ bool cISP::CheckNick(const string &Nick, const string &cc)
 	if (mNickPattern.length() > 0 && mOK)
 	{
 		if (mpNickRegex->Exec(Nick) < 0) return false;
-		if (mpNickRegex->GetStringNumber("CC") >=0)
+		if (mpNickRegex->GeStringNumber("CC") >=0)
 			return mpNickRegex->Compare("CC",Nick,cc) == 0;
 		else return true;
 	}
